@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import GoogleLogo from '../../Assets/Image/google.svg'
+import FacebookLogo from '../../Assets/Image/facebook.svg'
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { auth } from '../../Firebase/Firebase.init'
 const provider = new GoogleAuthProvider()
@@ -69,6 +70,12 @@ const Signup = () => {
                     <button onClick={handleGoogleAuth} className="google-auth">
                         <img src={GoogleLogo} alt="" />
                         <p> Continue with Google </p>
+                    </button>
+                </div>
+                <div className="input-wrapper">
+                    <button className="google-auth">
+                        <img src={FacebookLogo} alt="" />
+                        <p> Continue with Facebook </p>
                     </button>
                 </div>
             </div>
