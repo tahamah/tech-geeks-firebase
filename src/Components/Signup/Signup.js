@@ -31,11 +31,12 @@ const Signup = () => {
         const password = e.target.password.value
         const confirmPassword = e.target.confirmPassword.value
         if (password !== confirmPassword) {
-            return alert("Password doesn't match!")
+            return alert("Confirm Password doesn't match!")
         }
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user
+                navigate('/login')
                 console.log(user)
             })
             .catch((error) => {
