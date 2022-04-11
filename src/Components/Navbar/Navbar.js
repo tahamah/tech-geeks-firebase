@@ -4,7 +4,7 @@ import Logo from '../../Assets/Image/logo.png'
 import './Navbar.css'
 import { useLocation } from 'react-router-dom'
 import { auth } from '../../Firebase/Firebase.init'
-import { onAuthStateChanged } from 'firebase/auth'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
 
 const Navbar = () => {
     const { pathname } = useLocation()
@@ -18,6 +18,17 @@ const Navbar = () => {
             }
         })
     }, [])
+
+    // Sign-out
+    const handleSingOut = () => {
+        signOut(auth)
+            .then(() => {
+                // Remove
+            })
+            .catch((error) => {
+                // An error happened.
+            })
+    }
 
     return (
         <nav
@@ -53,10 +64,15 @@ const Navbar = () => {
                     }
                     to="/login"
                 >
-                    {!user ? (
+                    {!user.email ? (
                         'Log in'
                     ) : (
-                        <button className="logout-button">Log Out</button>
+                        <button
+                            onClick={handleSingOut}
+                            className="logout-button"
+                        >
+                            Log Out
+                        </button>
                     )}
                 </NavLink>
             </div>
