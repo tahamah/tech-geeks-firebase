@@ -2,7 +2,11 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import GoogleLogo from '../../Assets/Image/google.svg'
 import FacebookLogo from '../../Assets/Image/facebook.svg'
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import {
+    createUserWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup,
+} from 'firebase/auth'
 import { auth } from '../../Firebase/Firebase.init'
 const provider = new GoogleAuthProvider()
 
@@ -12,6 +16,26 @@ const Signup = () => {
         signInWithPopup(auth, provider)
             .then((result) => {
                 const user = result.user
+                console.log(user)
+                navigate('/')
+            })
+            .catch((error) => {
+                const errorMessage = error.message
+                console.log(errorMessage)
+            })
+    }
+
+    const handleFormSubmit = (e) => {
+        e.preventDefault()
+        const email = e.target.email.value
+        const password = e.target.password.value
+        const confirmPassword = e.target.confirmPassword.value
+        if (password !== confirmPassword) {
+            return alert("Password doesn't match!")
+        }
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                const user = userCredential.user
                 console.log(user)
             })
             .catch((error) => {
@@ -24,7 +48,7 @@ const Signup = () => {
         <div className="auth-form-container ">
             <div className="auth-form">
                 <h1>Sign Up</h1>
-                <form>
+                <form onSubmit={handleFormSubmit}>
                     <div className="input-field">
                         <label htmlFor="email">Email</label>
                         <div className="input-wrapper">
