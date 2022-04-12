@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import GoogleLogo from '../../Assets/Image/google.svg'
 import FacebookLogo from '../../Assets/Image/facebook.svg'
@@ -12,6 +12,37 @@ const provider = new GoogleAuthProvider()
 
 const Signup = () => {
     const navigate = useNavigate()
+    const [email, setEmail] = useState({ value: '', error: '' })
+    const [password, setPassword] = useState({ value: '', error: '' })
+    const [confirmPassword, setConfirmPassword] = useState({
+        value: '',
+        error: '',
+    })
+
+    const handleEmail = (email) => {
+        if (/^\S+@\S+\.\S+$/.test(email)) {
+            setEmail({ value: email, error: '' })
+        } else {
+            setEmail({ value: '', error: 'Invalid email !!' })
+        }
+    }
+    const handlePassword = (password) => {
+        if (password.length > 7) {
+            setPassword({ value: password, error: '' })
+        } else {
+            setPassword({ value: '', error: 'Password too short !!' })
+        }
+    }
+    const handleConfirmPassword = (cPassword) => {
+        if (password.value === cPassword) {
+            setConfirmPassword({ value: cPassword, error: '' })
+        } else {
+            setConfirmPassword({
+                value: '',
+                error: 'Those passwords didn’t match. Try again.',
+            })
+        }
+    }
     const handleGoogleAuth = () => {
         signInWithPopup(auth, provider)
             .then((result) => {
@@ -27,22 +58,26 @@ const Signup = () => {
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
-        const email = e.target.email.value
-        const password = e.target.password.value
-        const confirmPassword = e.target.confirmPassword.value
-        if (password !== confirmPassword) {
-            return alert("Confirm Password doesn't match!")
+
+        if (email.value === '') {
+            setEmail({ value: '', error: 'Email is required!!' })
         }
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user
-                navigate('/login')
-                console.log(user)
-            })
-            .catch((error) => {
-                const errorMessage = error.message
-                console.log(errorMessage)
-            })
+        if (password.value === '') {
+            setPassword({ value: '', error: 'Password is required!!' })
+        }
+
+        if (email.value && password.value && confirmPassword.value) {
+            createUserWithEmailAndPassword(auth, email.value, password.value)
+                .then((userCredential) => {
+                    const user = userCredential.user
+                    navigate('/login')
+                    console.log(user)
+                })
+                .catch((error) => {
+                    const errorMessage = error.message
+                    console.log(errorMessage)
+                })
+        }
     }
 
     return (
@@ -53,18 +88,28 @@ const Signup = () => {
                     <div className="input-field">
                         <label htmlFor="email">Email</label>
                         <div className="input-wrapper">
-                            <input type="email" name="email" id="email" />
+                            <input
+                                onBlur={(e) => handleEmail(e.target.value)}
+                                type="email"
+                                name="email"
+                                id="email"
+                            />
                         </div>
+                        {email?.error && <p className="error">{email.error}</p>}
                     </div>
                     <div className="input-field">
                         <label htmlFor="password">Password</label>
                         <div className="input-wrapper">
                             <input
+                                onBlur={(e) => handlePassword(e.target.value)}
                                 type="password"
                                 name="password"
                                 id="password"
                             />
                         </div>
+                        {password?.error && (
+                            <p className="error">{password.error}</p>
+                        )}
                     </div>
                     <div className="input-field">
                         <label htmlFor="confirm-password">
@@ -72,11 +117,17 @@ const Signup = () => {
                         </label>
                         <div className="input-wrapper">
                             <input
+                                onBlur={(e) =>
+                                    handleConfirmPassword(e.target.value)
+                                }
                                 type="password"
                                 name="confirmPassword"
                                 id="confirm-password"
                             />
                         </div>
+                        {confirmPassword?.error && (
+                            <p className="error">{confirmPassword.error}</p>
+                        )}
                     </div>
                     <button type="submit" className="auth-form-submit">
                         Sign Up
